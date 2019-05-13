@@ -13,11 +13,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -67,7 +65,7 @@ public class ContactsFragment extends Fragment implements LoaderManager.LoaderCa
     // The column index for the _ID column
     private static final int CONTACT_ID_INDEX = 0;
     // The column index for the CONTACT_KEY column
-    private static final int CONTACT_KEY_INDEX = 1;
+    private static final int CONTACT_KEY_INDEX = 3;
 
     // Defines the text expression
     @SuppressLint("InlinedApi")
@@ -94,13 +92,20 @@ public class ContactsFragment extends Fragment implements LoaderManager.LoaderCa
                     // The contact's _ID, to construct a content URI
                     ContactsContract.Data.CONTACT_ID,
                     // The contact's LOOKUP_KEY, to construct a content URI
-                    ContactsContract.Data.LOOKUP_KEY // A permanent link to the contact
+                    ContactsContract.Data.LOOKUP_KEY, // A permanent link to the contact
+
+                    ContactsContract.Data.PHOTO_THUMBNAIL_URI,
+                    ContactsContract.CommonDataKinds.Phone._ID,
+                    ContactsContract.CommonDataKinds.Email.ADDRESS,
+                    ContactsContract.CommonDataKinds.Email.TYPE,
+                    ContactsContract.CommonDataKinds.Email.LABEL,
+                    ContactsContract.CommonDataKinds.Email.ADDRESS
             };
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.contacts_list_view,container, false);
+        return inflater.inflate(R.layout.contacts_list_item,container, false);
 
     }
 
@@ -139,8 +144,7 @@ public class ContactsFragment extends Fragment implements LoaderManager.LoaderCa
         super.onActivityCreated(savedInstanceState);
 
         // Gets the ListView from the View list of the parent activity
-        contactsList =
-                (ListView) getActivity().findViewById(R.id.list);
+        contactsList = getActivity().findViewById(R.id.list);
         // Gets a CursorAdapter
         cursorAdapter = new SimpleCursorAdapter(
                 getActivity(),
@@ -170,14 +174,14 @@ public class ContactsFragment extends Fragment implements LoaderManager.LoaderCa
         // Get the selected LOOKUP KEY
         contactKey = cursor.getString(CONTACT_KEY_INDEX);
         // Create the contact's content Uri
-        contactUri = ContactsContract.Contacts.getLookupUri(contactId, contactKey);
+//        contactUri = ContactsContract.Contacts.getLookupUri(contactId, contactKey);
         /*
          * You can use contactUri as the content URI for retrieving
          * the details for a contact.
          */
 
         FragmentManager fragmentManager=getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.frameLayout,ContactDetailsFragment.newInstance(contactKey)).commit();
+        fragmentManager.beginTransaction().replace(R.id.frameLayout,ContactDetailsFragment.newInstance(contactKey),"addonstack2").addToBackStack(null).commit();
 
     }
 }
